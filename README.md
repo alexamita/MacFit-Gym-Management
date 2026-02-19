@@ -1,6 +1,4 @@
-## Project Title
-
-**MacFit – Gym Management System**
+## **MacFit – Gym Management System**
 
 ---
 
@@ -244,7 +242,7 @@ app/
 
 ---
 
-## 🛠 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -253,6 +251,6 @@ app/
 
 ---
 
-## 📄 License
+## License
 
 This project is open-source and available under the MIT License.
