@@ -30,14 +30,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/updateCategory/{id}', [CategoryController::class, 'updateCategory']);
     Route::delete('/deleteCategory/{id}', [CategoryController::class, 'deleteCategory']);
 
-
     // Gym Routes
     Route::post('/saveGym', [GymController::class, 'createGym']);
     Route::get('/getGyms', [GymController::class, 'readAllGyms']);
     Route::get('/getGym/{id}', [GymController::class, 'readGym']);
     Route::post('/updateGym/{id}', [GymController::class, 'updateGym']);
     Route::delete('/deleteGym/{id}', [GymController::class, 'deleteGym']);
-
 
     // Bundle Routes
     Route::post('/saveBundle', [BundleController::class, 'createBundle']);
@@ -46,14 +44,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/updateBundle/{id}', [BundleController::class, 'updateBundle']);
     Route::delete('/deleteBundle/{id}', [BundleController::class, 'deleteBundle']);
 
-
     // Equipment Routes
     Route::post('/saveEquipment', [EquipmentController::class, 'createEquipment']);
     Route::get('/getEquipment', [EquipmentController::class, 'readAllEquipment']);
     Route::get('/getEquipment/{id}', [EquipmentController::class, 'readEquipment']);
     Route::post('/updateEquipment/{id}', [EquipmentController::class, 'updateEquipment']);
     Route::delete('/deleteEquipment/{id}', [EquipmentController::class, 'deleteEquipment']);
-
 
     // Subscription routes
     Route::post('/saveSubscription', [SubscriptionController::class, 'createSubscription']);
