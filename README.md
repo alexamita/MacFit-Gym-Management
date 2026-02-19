@@ -4,7 +4,7 @@
 
 ## Introduction
 
-MacFit is a Laravel-based backend API designed to manage gym branches, workout categories, and dynamic membership bundles. The system centralizes gym operations by handling branch management, structured workout categories, and flexible membership packages with scheduling capabilities.
+MacFit is a Laravel-based backend system to manage gym branches, workout categories, and dynamic membership bundles. The system centralizes gym operations by handling branch management, structured workout categories, and flexible membership packages with scheduling capabilities.
 
 Built with Laravel 12 and powered by MySQL, MacFit provides a scalable and maintainable backend architecture suitable for gym chains and fitness centers.
 
