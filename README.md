@@ -1,59 +1,258 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+## Project Title
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**MacFit – Gym Management System**
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Introduction
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+MacFit is a Laravel-based backend API designed to manage gym branches, workout categories, and dynamic membership bundles. The system centralizes gym operations by handling branch management, structured workout categories, and flexible membership packages with scheduling capabilities.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Built with Laravel 12 and powered by MySQL, MacFit provides a scalable and maintainable backend architecture suitable for gym chains and fitness centers.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Features
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Gym Management
+- Manage multiple gym locations and branches.
+- Store branch-specific data including formatted names (e.g., `GymName-WorkoutArea`).
 
-## Laravel Sponsors
+### Category System
+- Organize workouts by type:
+  - Strength
+  - Yoga
+  - HIIT
+  - Cardio
+  - And more...
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Dynamic Membership Bundles
+Create flexible membership packages with:
+- Configurable session durations (in hours)
+- Linked gym locations
+- Daily start times
+- Schedule-based logic
+- Extendable structure for subscriptions
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Tech Stack
 
-## Contributing
+| Component | Version |
+|------------|----------|
+| Framework | Laravel 12.51.0 |
+| Language | PHP 8.5.3 |
+| Database | MySQL |
+| Time Handling | Carbon |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Installation
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 1️⃣ Prerequisites
 
-## Security Vulnerabilities
+Ensure the following are installed:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- PHP
+- Composer
+- MySQL
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 2️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/alexamita/MacFit-Gym-Management.git
+cd macfit
+```
+
+---
+
+### 3️⃣ Install Dependencies
+
+```bash
+composer install
+```
+
+---
+
+### 4️⃣ Setup Environment
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+---
+
+## Database Setup
+
+1. Create a new MySQL database:
+
+```sql
+CREATE DATABASE macfit_db;
+```
+
+2. Update `.env` file:
+
+```
+DB_DATABASE=macfit_db
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+3. Run migrations and seeders:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+This will:
+- Create all necessary tables
+- Populate gyms, roles, categories, equipment, and bundles.
+
+---
+
+## Usage
+
+Start the development server:
+
+```bash
+php artisan serve
+```
+
+Default URL:
+
+```
+http://127.0.0.1:8000
+```
+
+API base path:
+
+```
+/api/
+```
+
+---
+
+## API Endpoints
+
+### Bundles
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| POST | `/api/saveBundle` | Create a new workout bundle |
+| GET | `/api/getBundles` | List all available bundles |
+| GET | `/api/getBundle/{id}` | Get details of a specific bundle |
+| POST | `/api/updateBundles/{id}` | Update an existing bundle |
+| DELETE | `/api/deleteBundle/{id}` | Delete a bundle |
+
+---
+
+## Project Structure
+
+```
+app/
+├── app/
+│   ├── 📂 Http/
+│   │   └── 📂 Controllers/
+│   │   │   ├── 📄 AuthController.php
+│   │   │   ├── 📄 BundleController.php
+│   │   │   ├── 📄 CategoryController.php
+│   │   │   ├── 📄 Controller.php
+│   │   │   ├── 📄 EquipmentController.php
+│   │   │   ├── 📄 GymController.php
+│   │   │   ├── 📄 RoleController.php
+│   │   │   └── 📄 SubscriptionController.php
+│   ├── 📂 Models/
+│   │   ├── 📄 Bundle.php
+│   │   ├── 📄 Category.php
+│   │   ├── 📄 Equipment.php
+│   │   ├── 📄 Gym.php
+│   │   ├── 📄 Role.php
+│   │   ├── 📄 Subscription.php
+│   │   └── 📄 User.php
+│   └── 📂 Providers/
+├── 📂 database/
+│   ├── 📂 factories/
+│   ├── 📂 migrations/
+│   │   ├── 📄 0001_01_01_000000_create_users_table.php
+│   │   ├── 📄 0001_01_01_000001_create_cache_table.php
+│   │   ├── 📄 0001_01_01_000002_create_jobs_table.php
+│   │   ├── 📄 2026_02_16_080147_create_gyms_table.php
+│   │   ├── 📄 2026_02_16_165833_create_personal_access_tokens_table.php
+│   │   ├── 📄 2026_02_17_063523_create_roles_table.php
+│   │   ├── 📄 2026_02_17_085637_create_categories_table.php
+│   │   ├── 📄 2026_02_18_092247_create_bundles_table.php
+│   │   ├── 📄 2026_02_18_140505_create_equipment_table.php
+│   │   └── 📄 2026_02_18_140530_create_subscriptions_table.php
+│   └── 📂 seeders/
+│   │   ├── 📄 BundleSeeder.php
+│   │   ├── 📄 CategorySeeder.php
+│   │   ├── 📄 DatabaseSeeder.php
+│   │   ├── 📄 EquipmentSeeder.php
+│   │   ├── 📄 GymSeeder.php
+│   │   ├── 📄 RoleSeeder.php
+│   │   └── 📄 SubscriptionSeeder.php
+├── **README.md**
+├── 📂 routes/
+│   ├── 📄 api.php
+│   ├── 📄 console.php
+│   └── 📄 web.php
+
+```
+
+### Highlights
+
+- **Migrations** define schema for:
+  - Gyms
+  - Roles
+  - Equipment
+  - Users
+  - Categories
+  - Bundles
+  - Subscriptions
+
+- **Seeders** populate realistic gym data and workout schedules.
+
+---
+
+## Examples
+
+### Example: Create Bundle (POST `/api/saveBundle`)
+
+```json
+{
+        "name": "Basic Powerlifting",
+        "location": "Heavy Weight Zone",
+        "start_time": ,
+        "session_duration": 2, //hours
+        "description": "2-hour daily access to heavy racks.",
+        "category_id": 1,
+        "gym_id": 5,
+}
+```
+
+---
+
+## Dependencies
+
+- Laravel Framework
+- Carbon (Date & Time Handling)
+- MySQL Driver
+- Composer Packages (managed via `composer.json`)
+
+---
+
+## 🛠 Troubleshooting
+
+### Common Issues
+
+**Seeder Not Running**
+- Confirm `DatabaseSeeder.php` references your seeders.
+
+---
+
+## 📄 License
+
+This project is open-source and available under the MIT License.
