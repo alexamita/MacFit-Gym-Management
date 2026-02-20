@@ -20,8 +20,10 @@ return new class extends Migration
             $table->decimal('value', 10, 2);
             $table->enum('status', ['ACTIVE', 'UNDER_MAINTENANCE', 'FAULTY','DECOMMISSIONED'])->default('ACTIVE');
             $table->unsignedBigInteger('gym_id');
+            $table->unsignedBigInteger('category_id');
 
             $table->foreign('gym_id')->references('id')->on('gyms');
+            $table->foreign('category_id')->references('id')->on('categories');
             $table->timestamps();
         });
     }

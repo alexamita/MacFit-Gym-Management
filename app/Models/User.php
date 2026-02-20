@@ -22,6 +22,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+
+        'is_active',
+        'user_image',
+        'role_id',
     ];
 
     /**
@@ -39,11 +43,30 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+
+    // Cast the email_verified_at attribute to a datetime object, the password to a hashed value, and is_active to a boolean for proper data handling and security in the application
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'is_active' => 'boolean',
+    ];
+
+    // Define the relationship between the User model and the Role model, indicating that each user belongs to a specific role which determines their permissions and access levels within the application
+    public function role()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+        return $this->belongsTo(Role::class);
+    }
+
+    // Define a method to return the user's abilities based on their role, which can be used for authorization checks throughout the application to control access to various features and resources
+    public function abilities()
+    {
+        return[
+            'ADMIN' => $this->role->id === 1,
+            'GYM_MANAGER' => $this->role->id === 2,
+            'TRAINER' => $this->role->id === 3,
+            'STAFF' => $this->role->id === 4,
+            'MEMBER' => $this->role->id === 5,
+            'USER' => $this->role->id === 6,
         ];
     }
 }

@@ -15,6 +15,7 @@ class EquipmentController extends Controller
             'value'=>'required|numeric|min:0',
             'status'=>'required|string|in:ACTIVE,UNDER_MAINTENANCE,FAULTY,DECOMMISSIONED',
             'gym_id'=>'required|int|exists:gyms,id',
+            'category_id'=>'required|int|exists:categories,id',
             ]);
             $equipment = new Equipment();
             $equipment->name = $validated['name'];
@@ -23,6 +24,7 @@ class EquipmentController extends Controller
             $equipment->value = $validated['value'];
             $equipment->status = $validated['status'];
             $equipment->gym_id = $validated['gym_id'];
+            $equipment->category_id = $validated['category_id'];
 
             try{
                 $createdEquipment = $equipment->save();
@@ -40,10 +42,12 @@ class EquipmentController extends Controller
     public function readAllEquipment(){
         try{
             // $equipment = Equipment::all();
-            // read equipment with gym name
+            // read equipment with gym name and category name using join
             $equipment = Equipment::join('gyms', 'equipment.gym_id', '=', 'gyms.id')
-            ->select('equipment.*', 'gyms.name as gym_name')
-            ->get();
+            ->join('categories', 'equipment.category_id', '=', 'categories.id')
+            ->select('equipment.*', 'gyms.name as gym_name', 'categories.name as category_name')
+            ->get(); // fetch all equipment with gym name and category name
+
             return response()->json($equipment);
             }
             catch(\Exception $exception){

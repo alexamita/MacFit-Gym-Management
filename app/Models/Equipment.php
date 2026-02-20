@@ -14,5 +14,6 @@ class Equipment extends Model
         "value",
         "status",
         "gym_id",
+        "category_id",
     ];
 }

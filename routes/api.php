@@ -15,7 +15,13 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // PROTECTED ROUTES
+// All routes within this group require authentication using Sanctum middleware, ensuring that only authenticated users can access the endpoints for managing roles, categories, gyms, bundles, equipment, and subscriptions in the gym management system application
+
 Route::middleware('auth:sanctum')->group(function () {
+
+// Logout route for authenticated users to revoke their access token and log out of the application
+    Route::post('/logout', [AuthController::class, 'logout']);
+
     // Role Routes
     Route::post('/saveRole', [RoleController::class, 'createRole']);
     Route::get('/getRoles', [RoleController::class, 'readAllRoles']);

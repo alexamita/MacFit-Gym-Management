@@ -23,8 +23,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 185000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 1,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 1,
             ],
             [
                 'name' => 'Olympic Barbell 20kg',
@@ -33,8 +32,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 35000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 1,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 1,
             ],
             [
                 'name' => 'Adjustable Bench',
@@ -43,8 +41,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 42000.00,
                 'status' => 'UNDER_MAINTENANCE',
                 'gym_id' => 1,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 1,
             ],
 
             // Gym 2
@@ -55,8 +52,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 165000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 2,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 3,
             ],
             [
                 'name' => 'Concept2 RowErg',
@@ -65,8 +61,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 155000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 2,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 2,
             ],
             [
                 'name' => 'Kettlebell Set (8–32kg)',
@@ -75,8 +70,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 98000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 2,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 5,
             ],
 
             // Gym 3
@@ -87,8 +81,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 50000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 3,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 4,
             ],
             [
                 'name' => 'Pilates Reformer',
@@ -97,8 +90,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 650000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 3,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 9,
             ],
             [
                 'name' => 'Foam Roller Set',
@@ -107,8 +99,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 24000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 3,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 12,
             ],
 
             // Gym 4
@@ -119,8 +110,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 420000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 4,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 2,
             ],
             [
                 'name' => 'Elliptical Trainer',
@@ -129,8 +119,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 280000.00,
                 'status' => 'FAULTY',
                 'gym_id' => 4,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 2,
             ],
             [
                 'name' => 'Cable Crossover Machine',
@@ -139,8 +128,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 310000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 4,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 1,
             ],
 
             // Gym 5
@@ -151,8 +139,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 360000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 5,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 1,
             ],
             [
                 'name' => 'Physio Treatment Table',
@@ -161,8 +148,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 120000.00,
                 'status' => 'ACTIVE',
                 'gym_id' => 5,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 12,
             ],
             [
                 'name' => 'Resistance Bands Set',
@@ -171,8 +157,7 @@ class EquipmentSeeder extends Seeder
                 'value' => 18000.00,
                 'status' => 'DECOMMISSIONED',
                 'gym_id' => 5,
-                'created_at' => '2026-02-18 16:46:02',
-                'updated_at' => '2026-02-18 16:46:02',
+                'category_id' => 4,
             ],
         ];
 

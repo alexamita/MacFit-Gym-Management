@@ -34,6 +34,10 @@ class RoleSeeder extends Seeder
                 'name' => 'MEMBER',
                 'description' => 'Gym member who can subscribe to bundles and manage their profile.'
             ],
+            [
+                'name' => 'USER',
+                'description' => 'User Role.'
+            ],
         ];
 
         foreach ($roles as $role) {
