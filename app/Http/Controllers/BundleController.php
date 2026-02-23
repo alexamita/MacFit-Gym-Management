@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Bundle;
+use Illuminate\Support\Facades\Gate;
+
 class BundleController extends Controller
 {
-      // Create bundle
+    // Create bundle
     public function createBundle(Request $request){
+        // Authorize using the BundlePolicy 'create' method
+        $this->authorize('create', Bundle::class);
+
         $validated = $request->validate([
             // Validation rules based on the migration and seeder logic
             'name'=>'required|string',
@@ -19,67 +24,63 @@ class BundleController extends Controller
             'gym_id'=>'int|exists:gyms,id',
             ]);
 
-            // Create a new bundle instance and save to the database
-            $bundle = new Bundle();
-            $bundle->name = $validated['name'];
-            $bundle->location = $validated['location'];
-            $bundle->start_time = $validated['start_time'];
-            $bundle->session_duration = $validated['session_duration'];
-            $bundle->description = $validated['description'];
-            $bundle->category_id = $validated['category_id'];
-            $bundle->gym_id = $validated['gym_id'];
-
             // Save the bundle and return a response
             try{
-                $createdBundle = $bundle->save();
-                return response()->json($bundle);
+            // Using Mass Assignment to create the bundle
+            $bundle = Bundle::create($validated);
+            return response()->json($bundle, 201);;
             }
             // Handle any exceptions that may occur during the save operation
             catch(\Exception $exception){
                 return response()->json(
                     ['error'=>'Failed to save bundle',
                     'message'=> $exception->getMessage()
-                ]);
+                ], 500);
             }
     }
 
-    // Read all categories
+    // Read all bundles
     public function readAllBundles(){
+        // Authorize using the BundlePolicy 'viewAny' method: everyone can view bundles, but we check just in case
+        $this->authorize('viewAny', Bundle::class);
+
         // Fetch bundles with related category and gym names for better readability
             try{
-                // $bundles = Bundle::all();
-                // join bundles with category and gym names
+                // Using Eager Loading (with) is much cleaner than manual joins
+                $bundles = Bundle::with(['role', 'gym'])->get();
+
+                /* join bundles with category and gym names
                 $bundles = Bundle::join('categories', 'bundles.category_id', '=', 'categories.id')
                 ->join('gyms', 'bundles.gym_id', '=', 'gyms.id')
                 ->select('bundles.*', 'categories.name as category_name', 'gyms.name as gym_name')
                 ->get();
+                */
 
                 return response()->json($bundles);
             }
-            // Handle any exceptions that may occur during the database query
             catch(\Exception $exception){
                 return response()->json([
                     'error'=> 'Failed to fetch bundles',
                     'message'=> $exception->getMessage()
-                ]);
+                ], 500);
             }
     }
 
+    // Read single bundle
     public function readBundle($id){
-        try {
-            $bundle = Bundle::findOrFail($id);
-            return response()->json($bundle);
-        }
-        catch(\Exception $exception){
-                return response()->json([
-                    'error'=> 'Failed to fetch the bundle with ID: ',&$id,
-                    'message'=> $exception->getMessage()
-                ]);
-            }
+        // Fetch the bundle first to check if it exists and to use it for authorization
+        $bundle = Bundle::findOrFail($id);
+        // Authorize using the BundlePolicy 'view' method
+        $this->authorize('view', $bundle);
+        return response()->json($bundle);
     }
 
     // Update bundle
     public function updateBundle(Request $request, $id){
+        // Authorize using the BundlePolicy 'update' method
+        $bundle = Bundle::findOrFail($id);
+        $this->authorize('update', $bundle);
+
         $validated = $request->validate([
             'name'=>'required|string',
             'location'=>'required|string',
@@ -91,37 +92,31 @@ class BundleController extends Controller
             ]);
 
         try{
-            $bundle = Bundle::findOrFail($id);
-            $bundle->name = $validated['name'];
-            $bundle->location = $validated['location'];
-            $bundle->start_time = $validated['start_time'];
-            $bundle->session_duration = $validated['session_duration'];
-            $bundle->description = $validated['description'];
-            $bundle->category_id = $validated['category_id'];
-            $bundle->gym_id = $validated['gym_id'];
-            $bundle->save();
+            $bundle->update($validated);
             return response()->json($bundle);
         }
         catch(\Exception $exception){
             return response()->json([
-            'error'=> 'Failed to fetch the bundle with ID: '.$id,
+            'error'=> 'Failed to update the bundle with ID: '.$id,
             'message'=> $exception->getMessage()
-            ]);
+            ], 500);
         }
     }
 
     // Delete bundle
     public function deleteBundle($id){
+        // Authorize using the BundlePolicy 'delete' method
+        $bundle = Bundle::findOrFail($id);
+        $this->authorize('delete', $bundle);
         try{
-            $bundle = Bundle::findOrFail($id);
             $bundle->delete();
-            return response("Bundle deleted successfully");
+            return response()->json(['message' => 'Bundle deleted successfully']);
         }
         catch(\Exception $exception){
             return response()->json([
                 'error'=> 'Failed to delete the bundle',
                 'message'=> $exception->getMessage()
-            ]);
+            ], 500);
         }
     }
 }

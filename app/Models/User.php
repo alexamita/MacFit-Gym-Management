@@ -1,14 +1,15 @@
 <?php
-// User model representing a user of the fitness subscription service or gym management staff, with authentication and API token capabilities for secure access to the application and its features
+// This code defines a User model in a Laravel application, which represents the users of the system. It includes properties for mass assignment, hidden attributes, and casts for data types. The model also defines relationships and methods to determine user abilities based on their role.
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
@@ -18,11 +19,11 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
+
     protected $fillable = [
         'name',
         'email',
         'password',
-
         'is_active',
         'user_image',
         'role_id',
@@ -50,6 +51,13 @@ class User extends Authenticatable
         'password' => 'hashed',
         'is_active' => 'boolean',
     ];
+    // Define an accessor to determine if the user has an admin role, which can be used throughout the application to check for administrative privileges and control access to certain features or resources
+    protected function isAdmin(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->role?->name === 'ADMIN', // Check if the user's role name is 'ADMIN' to determine if they have admin privileges
+        );
+    }
 
     // Define the relationship between the User model and the Role model, indicating that each user belongs to a specific role which determines their permissions and access levels within the application
     public function role()
@@ -61,12 +69,13 @@ class User extends Authenticatable
     public function abilities()
     {
         return[
-            'ADMIN' => $this->role->id === 1,
-            'GYM_MANAGER' => $this->role->id === 2,
-            'TRAINER' => $this->role->id === 3,
-            'STAFF' => $this->role->id === 4,
-            'MEMBER' => $this->role->id === 5,
-            'USER' => $this->role->id === 6,
+            // Null-safe operator (?->) to prevent crashes if a user has no role
+            'ADMIN' => $this->role?->name === 'ADMIN',
+            'GYM_MANAGER' => $this->role?->name === 'GYM_MANAGER',
+            'TRAINER' => $this->role?->name === 'TRAINER',
+            'STAFF' => $this->role?->name === 'STAFF',
+            'MEMBER' => $this->role?->name === 'MEMBER',
+            'USER' => $this->role?->name === 'USER',
         ];
     }
 }

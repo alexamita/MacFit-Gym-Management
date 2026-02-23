@@ -9,99 +9,86 @@ class SubscriptionController extends Controller
 {
     // Create subscription
     public function createSubscription(Request $request){
+        // Logic: Only MEMBERS/USERS can create for themselves.
+        $this->authorize('create', Subscription::class);
+
         $validated = $request->validate([
             'user_id'=>'required|int|exists:users,id',
             'bundle_id'=>'required|int|exists:bundles,id',
             'status'=>'required|string|in:ACTIVE,CANCELLED,EXPIRED',
             ]);
-            $subscription = new Subscription();
-            $subscription->user_id = $validated['user_id'];
-            $subscription->bundle_id = $validated['bundle_id'];
-            $subscription->status = $validated['status'];
 
-            try{
-                $createdSubscription = $subscription->save();
-                return response()->json($subscription);
-            }
-            catch(\Exception $exception){
-                return response()->json(
-                    ['error'=>'Failed to save subscription',
-                    'message'=> $exception->getMessage()
-                ]);
-            }
-    }
-
-    // Read all subscriptions
-    public function readAllSubscriptions(){
-        try{
-            // $subscriptions = Subscription::all();
-
-            // join subscriptions with user and bundle names
-            $subscriptions = Subscription::join('users', 'subscriptions.user_id', '=', 'users.id')
-            ->join('bundles', 'subscriptions.bundle_id', '=', 'bundles.id')
-            ->select('subscriptions.*', 'users.name as user_name', 'bundles.name as bundle_name')
-            ->get();
-            return response()->json($subscriptions);
-            }
-            catch(\Exception $exception){
-                return response()->json([
-                    'error'=> 'Failed to fetch subscriptions',
-                    'message'=> $exception->getMessage()
-                ]);
-            }
-    }
-
-
-    // Read single subscription
-    public function readSubscription($id){
         try {
-            $subscription = Subscription::findOrFail($id);
-            return response()->json($subscription);
+            // Enforcement: Force the user_id to be the authenticated user
+            $subscription = Subscription::create([
+                'user_id'   => $request->user()->id,
+                'bundle_id' => $validated['bundle_id'],
+                'status'    => $validated['status'],
+            ]);
+
+            return response()->json($subscription->load(['user', 'bundle']), 201);
         }
-        catch(\Exception $exception){
-                return response()->json([
-                    'error'=> 'Failed to fetch the subscription with ID: ',&$id,
-                    'message'=> $exception->getMessage()
-                ]);
+        catch (\Exception $exception) {
+            return response()->json([
+                'error'   => 'Failed to save subscription',
+                'message' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Read all subscriptions
+     * Logic: Staff/Managers see all. Others are filtered out by the viewAny check
+     * except when they are fetching their own subscriptions.
+     */
+    public function readAllSubscriptions(Request $request){
+        $role = $request->user()->role->name;
+        try {
+            // Start the query with eager loading
+            $query = Subscription::with(['user:id,name', 'bundle:id,name']);
+
+            // 1. If Staff/Manager/Admin, they pass 'viewAny' and see all
+            if (in_array($role, ['ADMIN', 'GYM_MANAGER', 'STAFF'])) {
+                $subscriptions = $query->get();
             }
-    }
-
-    // Update subscription
-    public function updateSubscription(Request $request, $id){
-        $validated = $request->validate([
-            'user_id'=>'required|int|exists:users,id',
-            'bundle_id'=>'required|int|exists:bundles,id',
-            'status'=>'required|string|in:ACTIVE,CANCELLED,EXPIRED',
-            ]);
-
-        try{
-            $subscription = Subscription::findOrFail($id);
-            $subscription->user_id = $validated['user_id'];
-            $subscription->bundle_id = $validated['bundle_id'];
-            $subscription->status = $validated['status'];
-            $subscription->save();
-            return response()->json($subscription);
+            // 2. Otherwise, we filter the query to only their own records
+            else {
+                $subscriptions = $query->where('user_id', $request->user()->id)->get();
+            }
+            return response()->json($subscriptions);
         }
         catch(\Exception $exception){
             return response()->json([
-            'error'=> 'Failed to fetch the subscription with ID: '.$id,
-            'message'=> $exception->getMessage()
-            ]);
-        }
-    }
-
-    // Delete subscription
-    public function deleteSubscription($id){
-        try{
-            $subscription = Subscription::findOrFail($id);
-            $subscription->delete();
-            return response("Subscription deleted successfully");
-        }
-        catch(\Exception $exception){
-            return response()->json([
-                'error'=> 'Failed to delete the subscription',
+                'error'=> 'Failed to fetch subscriptions',
                 'message'=> $exception->getMessage()
-            ]);
+            ], 500);
+        }
+    }
+
+    /**
+     * Read single subscription
+     * Logic: Owner, Gym Manager, or Staff can view.
+     */
+    public function readSubscription(Subscription $subscription){
+        $this->authorize('view', $subscription);
+        return response()->json($subscription->load(['user', 'bundle']));
+    }
+
+    /**
+     * Delete (Cancel) subscription
+     * Logic: Only Owner or Gym Manager/Admin can delete.
+     */
+    public function deleteSubscription(Subscription $subscription){
+        $this->authorize('delete', $subscription);
+
+        try {
+            $subscription->delete();
+            return response()->json(['message' => 'Subscription cancelled successfully'], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'error'   => 'Failed to delete the subscription',
+                'message' => $exception->getMessage()
+            ], 500);
         }
     }
 

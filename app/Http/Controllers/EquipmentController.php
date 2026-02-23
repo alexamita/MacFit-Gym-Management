@@ -8,6 +8,10 @@ class EquipmentController extends Controller
 {
 // Create equipment
     public function createEquipment(Request $request){
+        // Authorize using the EquipmentPolicy 'create' method
+        $this->authorize('create', Equipment::class);
+
+        // Validation rules based on the migration and seeder logic
         $validated = $request->validate([
             'name'=>'required|string',
             'usage'=>'required|string',
@@ -17,37 +21,35 @@ class EquipmentController extends Controller
             'gym_id'=>'required|int|exists:gyms,id',
             'category_id'=>'required|int|exists:categories,id',
             ]);
-            $equipment = new Equipment();
-            $equipment->name = $validated['name'];
-            $equipment->usage = $validated['usage'];
-            $equipment->model_no = $validated['model_no'];
-            $equipment->value = $validated['value'];
-            $equipment->status = $validated['status'];
-            $equipment->gym_id = $validated['gym_id'];
-            $equipment->category_id = $validated['category_id'];
 
-            try{
-                $createdEquipment = $equipment->save();
-                return response()->json($equipment);
-            }
-            catch(\Exception $exception){
-                return response()->json(
-                    ['error'=>'Failed to save equipment',
-                    'message'=> $exception->getMessage()
-                ]);
-            }
+        try {
+            // Using Mass Assignment
+            $equipment = Equipment::create($validated);
+            return response()->json($equipment, 201);
+        }
+        catch (\Exception $exception){
+            return response()->json([
+                'error'   => 'Failed to save equipment',
+                'message' => $exception->getMessage()
+            ], 500);
+        }
     }
 
     // Read all equipment
     public function readAllEquipment(){
+        // Authorize using the EquipmentPolicy 'viewAny' method: everyone can view equipment, but we check just in case
+        $this->authorize('viewAny', Equipment::class);
         try{
-            // $equipment = Equipment::all();
+            // Eager load Gym and Category instead of using JOIN
+            $equipment = Equipment::with(['gym:id,name', 'category:id,name'])->get();
+
+            /*
             // read equipment with gym name and category name using join
             $equipment = Equipment::join('gyms', 'equipment.gym_id', '=', 'gyms.id')
             ->join('categories', 'equipment.category_id', '=', 'categories.id')
             ->select('equipment.*', 'gyms.name as gym_name', 'categories.name as category_name')
             ->get(); // fetch all equipment with gym name and category name
-
+            */
             return response()->json($equipment);
             }
             catch(\Exception $exception){
@@ -58,23 +60,20 @@ class EquipmentController extends Controller
             }
     }
 
-
     // Read single equipment
-    public function readEquipment($id){
-        try {
-            $equipment = Equipment::findOrFail($id);
-            return response()->json($equipment);
-        }
-        catch(\Exception $exception){
-                return response()->json([
-                    'error'=> 'Failed to fetch the equipment with ID: ',&$id,
-                    'message'=> $exception->getMessage()
-                ]);
-            }
+    public function readEquipment(Equipment $equipment){
+        // Route Model Binding handles findOrFail and 404 automatically
+        $this->authorize('view', $equipment);
+
+        // Eager load Gym and Category for better readability
+        return response()->json($equipment->load(['gym', 'category']));
     }
 
     //Update the specified equipment in storage.
-    public function updateEquipment(Request $request, $id){
+    public function updateEquipment(Request $request, Equipment $equipment){
+        // Authorize using the EquipmentPolicy 'update' method
+        $this->authorize('update', $equipment);
+
         $validated = $request->validate([
             'name'=>'required|string',
             'usage'=>'required|string',
@@ -84,37 +83,30 @@ class EquipmentController extends Controller
             'gym_id'=>'required|int|exists:gyms,id',
             ]);
 
-        try{
-            $equipment = Equipment::findOrFail($id);
-            $equipment->name = $validated['name'];
-            $equipment->usage = $validated['usage'];
-            $equipment->model_no = $validated['model_no'];
-            $equipment->value = $validated['value'];
-            $equipment->status = $validated['status'];
-            $equipment->gym_id = $validated['gym_id'];
-            $equipment->save();
+        try {
+            $equipment->update($validated);
             return response()->json($equipment);
-        }
-        catch(\Exception $exception){
+        } catch (\Exception $exception) {
             return response()->json([
-            'error'=> 'Failed to fetch the equipment with ID: '.$id,
-            'message'=> $exception->getMessage()
-            ]);
+                'error'   => 'Failed to update the equipment with ID: ' . $equipment->id,
+                'message' => $exception->getMessage()
+            ], 500);
         }
     }
 
     // Remove the specified equipment from storage.
-    public function deleteEquipment($id){
+    public function deleteEquipment(Equipment $equipment){
+        // Authorize using the EquipmentPolicy 'delete' method
+        $this->authorize('delete', $equipment);
         try{
-            $equipment = Equipment::findOrFail($id);
             $equipment->delete();
-            return response("Equipment deleted successfully");
+            return response("Equipment deleted successfully", 200);
         }
         catch(\Exception $exception){
             return response()->json([
                 'error'=> 'Failed to delete the equipment',
                 'message'=> $exception->getMessage()
-            ]);
+            ], 500);
         }
     }
 
