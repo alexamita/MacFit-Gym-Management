@@ -8,38 +8,43 @@ use Illuminate\Auth\Access\Response;
 
 class SubscriptionPolicy
 {
-    /*
-     * Staff, Managers, and Admins can see the master list.
-     * Members/Users are handled via query filtering in the controller.
+    /**
+     * admin, gym_manager, staff and owner can view.
      */
     public function viewAny(User $user): bool
     {
-        return in_array($user->role->name, ['ADMIN', 'GYM_MANAGER', 'STAFF']);
+        return in_array($user->role?->slug, ['admin', 'gym_manager', 'staff'], true);
     }
 
-    /*
-     * A user can view a subscription if they own it,
-     * or if they are Staff/Management verifying the record.
+    /**
+     * admin, gym_manager, staff and owner can view.
      */
     public function view(User $user, Subscription $subscription): bool
     {
-        return $user->id === $subscription->user_id || in_array($user->role->name, ['GYM_MANAGER', 'STAFF']);
+        return (int) $user->id === (int) $subscription->user_id
+            || in_array($user->role?->slug, ['admin', 'gym_manager', 'staff'], true);
     }
 
-    /*
-     * Any authenticated user (Member/User) can create a subscription for themselves.
-     * Only allow members and users to create subscriptions for themselves
+    /**
+     * Any authenticated user can create their own subscription.
+     * (Still enforced user_id in controller.)
      */
     public function create(User $user): bool
     {
-        return $user->role->name === 'MEMBER' || $user->role->name === 'USER';
+        // return true;
+        return $user->role?->slug === 'user';
     }
 
-    /*
-     * Only the owner (Member) or the Gym Manager/Admin can cancel a subscription.
+    /**
+     * Only the owner can delete/cancel.
      */
     public function delete(User $user, Subscription $subscription): bool
     {
-        return $user->id === $subscription->user_id || in_array($user->role->name, ['GYM_MANAGER', 'ADMIN']);
+        return (int) $user->id === (int) $subscription->user_id;
+    }
+
+    public function __construct()
+    {
+        //
     }
 }

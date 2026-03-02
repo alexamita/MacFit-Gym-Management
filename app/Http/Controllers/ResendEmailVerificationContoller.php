@@ -7,7 +7,7 @@ use App\Notifications\VerifyEmailNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 
-class ResendEmailVerificationEcontoller extends Controller
+class ResendEmailVerificationContoller extends Controller
 {
     public function resendVerificationEmail(Request $request)
     {

@@ -1,5 +1,5 @@
 <?php
-// This code defines a User model in a Laravel application, which represents the users of the system. It includes properties for mass assignment, hidden attributes, and casts for data types. The model also defines relationships and methods to determine user abilities based on their role.
+
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -9,17 +9,27 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
+/**
+ * User Model
+ *
+ * Represents an authenticated system user within the gym management system.
+ *
+ * Architecture:
+ * - Each user belongs to exactly ONE role (role_id foreign key).
+ * - Role determines authorization and abilities.
+ * - Email verification is enforced.
+ * - Sanctum is used for API authentication.
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
     /**
-     * The attributes that are mass assignable.
-     *
+     * Mass assignable attributes.
+     * These fields can be safely assigned via create() or update().
      * @var list<string>
      */
-
     protected $fillable = [
         'name',
         'email',
@@ -27,11 +37,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_active',
         'user_image',
         'role_id',
+        'gym_id',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
+     * Attributes hidden from JSON serialization.
+     * Prevents exposure of sensitive data in API responses.
      * @var list<string>
      */
     protected $hidden = [
@@ -40,42 +51,79 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
+     * Attribute casting rules.
+     * Ensures proper data typing and automatic transformations.
      * @return array<string, string>
      */
-
-    // Cast the email_verified_at attribute to a datetime object, the password to a hashed value, and is_active to a boolean for proper data handling and security in the application
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_active' => 'boolean',
     ];
-    // Define an accessor to determine if the user has an admin role, which can be used throughout the application to check for administrative privileges and control access to certain features or resources
-    protected function isAdmin(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->role?->name === 'ADMIN', // Check if the user's role name is 'ADMIN' to determine if they have admin privileges
-        );
-    }
 
-    // Define the relationship between the User model and the Role model, indicating that each user belongs to a specific role which determines their permissions and access levels within the application
+
+
+    /**---------------
+     * Relationships
+    -----------------*/
+    /**
+     * Role Relationship
+     * Each user belongs to a single role.
+     * withTrashed() allows access to role even if it was soft-deleted, which preserves historical integrity.
+     */
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
 
-    // Define a method to return the user's abilities based on their role, which can be used for authorization checks throughout the application to control access to various features and resources
+    public function gym()
+    {
+        return $this->belongsTo(Gym::class);
+    }
+
+
+
+    /**----------------------
+     * Authorization Helpers
+    -------------------------*/
+    /**
+     * Computed attribute: is_admin
+     * Allows access like: $user->isadmin
+     */
+    protected function isAdmin(): Attribute
+    {
+        return Attribute::make(get: fn () => $this->role?->slug === 'admin');
+    }
+
+    /**
+     * Check if user has a specific role.
+     * @param string $slug Role identifier (e.g., 'admin')
+     * @return bool
+     */
+    public function hasRole(string $slug): bool
+    {
+        return $this->role?->slug === $slug;
+    }
+
+    /**
+     * Return user abilities based on role.
+     * Useful for:
+     * - API token scopes
+     * - Frontend permission toggles
+     * - Conditional UI rendering
+     *
+     * @return array<string, bool>
+     */
     public function abilities()
     {
+        $slug = $this->role?->slug;
         return[
-            // Null-safe operator (?->) to prevent crashes if a user has no role
-            'ADMIN' => $this->role?->name === 'ADMIN',
-            'GYM_MANAGER' => $this->role?->name === 'GYM_MANAGER',
-            'TRAINER' => $this->role?->name === 'TRAINER',
-            'STAFF' => $this->role?->name === 'STAFF',
-            'MEMBER' => $this->role?->name === 'MEMBER',
-            'USER' => $this->role?->name === 'USER',
+            // Null-safe operator (?->) prevents crashes if a user has no role
+            'ADMIN' => $slug === 'admin',
+            'GYM_MANAGER' => $slug === 'gym_manager',
+            'TRAINER' => $slug === 'trainer',
+            'STAFF' => $slug === 'staff',
+            'USER' => $slug === 'user',
         ];
     }
 }

@@ -1,17 +1,30 @@
 <?php
-// Gym model representing a gym location that can have bundles, equipment, and subscriptions associated with it for the gym management system, with details about the gym's name, location, and description
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Gym extends Model
 {
     protected $fillable = [
         "name",
-        "longitude",
-        "latitude",
+        "location",
+        "phone_number",
         "description",
-        "gym_id"
     ];
+
+/**------------------
+     * Relationships
+---------------------*/
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
+
+    // A gym has many bundles
+    public function bundles(): HasMany
+    {
+        return $this->hasMany(Bundle::class);
+    }
 }

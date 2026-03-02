@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Bundle;
-use Illuminate\Support\Facades\Gate;
+use App\Models\Role;
 
 class BundleController extends Controller
 {
@@ -19,6 +19,7 @@ class BundleController extends Controller
             'location'=>'required|string',
             'start_time'=>'required|date_format:H:i', // Expecting time in HH:MM format
             'session_duration'=>'required|integer',
+            'value'=> 'required|integer',
             'description'=>'string|nullable|max:1000',
             'category_id'=>'int|exists:categories,id',
             'gym_id'=>'int|exists:gyms,id',
@@ -47,7 +48,7 @@ class BundleController extends Controller
         // Fetch bundles with related category and gym names for better readability
             try{
                 // Using Eager Loading (with) is much cleaner than manual joins
-                $bundles = Bundle::with(['role', 'gym'])->get();
+                $bundles = Bundle::with(['category', 'gym'])->get();
 
                 /* join bundles with category and gym names
                 $bundles = Bundle::join('categories', 'bundles.category_id', '=', 'categories.id')
@@ -86,6 +87,7 @@ class BundleController extends Controller
             'location'=>'required|string',
             'start_time'=>'required|date_format:H:i', // Expecting time in HH:MM format
             'session_duration'=>'required|integer',
+            'value'=> 'required|integer',
             'description'=>'string|nullable|max:1000',
             'category_id'=>'int|exists:categories,id',
             'gym_id'=>'int|exists:gyms,id',

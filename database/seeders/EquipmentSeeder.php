@@ -1,45 +1,47 @@
 <?php
-// EquipmentSeeder class for seeding the equipment table with predefined gym equipment for each gym, linking them to existing gyms in the database, and ensuring that the equipment has realistic usage descriptions, model numbers, values, and statuses to create a comprehensive inventory of equipment for users to view and interact with in the gym management system
+
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Equipment;
 
 class EquipmentSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Seed equipment inventory across multiple gyms.
+     * Uses updateOrCreate so the seeder can be re-run safely.
      */
     public function run(): void
     {
-        // Predefined equipment data for each gym with attributes
         $equipmentData = [
             // Gym 1
             [
                 'name' => 'Power Rack',
-                'usage' => 'Compound lifts: squat, bench, overhead press',
-                'model_no' => 'IFF-PR-100',
+                'usage_notes' => 'Compound lifts: squat, bench, overhead press',
+                'manufacturer_serial_no' => 'IFF-PR-100',
+                'asset_code' => 'GYM1-PR-01',
                 'value' => 185000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 1,
                 'category_id' => 1,
             ],
             [
                 'name' => 'Olympic Barbell 20kg',
-                'usage' => 'Strength training and Olympic lifts',
-                'model_no' => 'IFF-OB-20',
+                'usage_notes' => 'Strength training and Olympic lifts',
+                'manufacturer_serial_no' => 'IFF-OB-20',
+                'asset_code' => 'GYM1-OB-01',
                 'value' => 35000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 1,
                 'category_id' => 1,
             ],
             [
                 'name' => 'Adjustable Bench',
-                'usage' => 'Incline/flat bench press and dumbbell work',
-                'model_no' => 'IFF-AB-220',
+                'usage_notes' => 'Incline/flat bench press and dumbbell work',
+                'manufacturer_serial_no' => 'IFF-AB-220',
+                'asset_code' => 'GYM1-AB-01',
                 'value' => 42000.00,
-                'status' => 'UNDER_MAINTENANCE',
+                'status' => Equipment::STATUS_UNDER_MAINTENANCE,
                 'gym_id' => 1,
                 'category_id' => 1,
             ],
@@ -47,28 +49,31 @@ class EquipmentSeeder extends Seeder
             // Gym 2
             [
                 'name' => 'Assault Air Bike',
-                'usage' => 'HIIT conditioning and intervals',
-                'model_no' => 'PPC-AAB-01',
+                'usage_notes' => 'HIIT conditioning and intervals',
+                'manufacturer_serial_no' => 'PPC-AAB-01',
+                'asset_code' => 'GYM2-AAB-01',
                 'value' => 165000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 2,
                 'category_id' => 3,
             ],
             [
                 'name' => 'Concept2 RowErg',
-                'usage' => 'Endurance training and rowing intervals',
-                'model_no' => 'PPC-C2R-05',
+                'usage_notes' => 'Endurance training and rowing intervals',
+                'manufacturer_serial_no' => 'PPC-C2R-05',
+                'asset_code' => 'GYM2-C2R-01',
                 'value' => 155000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 2,
                 'category_id' => 2,
             ],
             [
                 'name' => 'Kettlebell Set (8–32kg)',
-                'usage' => 'Functional training: swings, cleans, presses',
-                'model_no' => 'PPC-KB-SET',
+                'usage_notes' => 'Functional training: swings, cleans, presses',
+                'manufacturer_serial_no' => 'PPC-KB-SET',
+                'asset_code' => 'GYM2-KB-01',
                 'value' => 98000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 2,
                 'category_id' => 5,
             ],
@@ -76,28 +81,31 @@ class EquipmentSeeder extends Seeder
             // Gym 3
             [
                 'name' => 'Yoga Mats (Premium)',
-                'usage' => 'Yoga classes and floor exercises',
-                'model_no' => 'ZWS-YM-50',
+                'usage_notes' => 'Yoga classes and floor exercises',
+                'manufacturer_serial_no' => 'ZWS-YM-50',
+                'asset_code' => 'GYM3-YM-01',
                 'value' => 50000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 3,
                 'category_id' => 4,
             ],
             [
                 'name' => 'Pilates Reformer',
-                'usage' => 'Pilates reformer classes',
-                'model_no' => 'ZWS-PR-10',
+                'usage_notes' => 'Pilates reformer classes',
+                'manufacturer_serial_no' => 'ZWS-PR-10',
+                'asset_code' => 'GYM3-PR-01',
                 'value' => 650000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 3,
                 'category_id' => 9,
             ],
             [
                 'name' => 'Foam Roller Set',
-                'usage' => 'Mobility, recovery, myofascial release',
-                'model_no' => 'ZWS-FR-SET',
+                'usage_notes' => 'Mobility, recovery, myofascial release',
+                'manufacturer_serial_no' => 'ZWS-FR-SET',
+                'asset_code' => 'GYM3-FR-01',
                 'value' => 24000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 3,
                 'category_id' => 12,
             ],
@@ -105,28 +113,31 @@ class EquipmentSeeder extends Seeder
             // Gym 4
             [
                 'name' => 'Treadmill (Commercial)',
-                'usage' => 'Cardio training and fat loss',
-                'model_no' => 'MFD-TM-3000',
+                'usage_notes' => 'Cardio training and fat loss',
+                'manufacturer_serial_no' => 'MFD-TM-3000',
+                'asset_code' => 'GYM4-TM-01',
                 'value' => 420000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 4,
                 'category_id' => 2,
             ],
             [
                 'name' => 'Elliptical Trainer',
-                'usage' => 'Low-impact cardio conditioning',
-                'model_no' => 'MFD-ET-1200',
+                'usage_notes' => 'Low-impact cardio conditioning',
+                'manufacturer_serial_no' => 'MFD-ET-1200',
+                'asset_code' => 'GYM4-ET-01',
                 'value' => 280000.00,
-                'status' => 'FAULTY',
+                'status' => Equipment::STATUS_FAULTY,
                 'gym_id' => 4,
                 'category_id' => 2,
             ],
             [
                 'name' => 'Cable Crossover Machine',
-                'usage' => 'Strength training: chest fly, rows, triceps',
-                'model_no' => 'MFD-CC-900',
+                'usage_notes' => 'Strength training: chest fly, rows, triceps',
+                'manufacturer_serial_no' => 'MFD-CC-900',
+                'asset_code' => 'GYM4-CC-01',
                 'value' => 310000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 4,
                 'category_id' => 1,
             ],
@@ -134,36 +145,46 @@ class EquipmentSeeder extends Seeder
             // Gym 5
             [
                 'name' => 'Leg Press Machine',
-                'usage' => 'Lower-body strength development',
-                'model_no' => 'ESCH-LP-700',
+                'usage_notes' => 'Lower-body strength development',
+                'manufacturer_serial_no' => 'ESCH-LP-700',
+                'asset_code' => 'GYM5-LP-01',
                 'value' => 360000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 5,
                 'category_id' => 1,
             ],
             [
                 'name' => 'Physio Treatment Table',
-                'usage' => 'Rehab assessment and physiotherapy sessions',
-                'model_no' => 'ESCH-PT-20',
+                'usage_notes' => 'Rehab assessment and physiotherapy sessions',
+                'manufacturer_serial_no' => 'ESCH-PT-20',
+                'asset_code' => 'GYM5-PT-01',
                 'value' => 120000.00,
-                'status' => 'ACTIVE',
+                'status' => Equipment::STATUS_ACTIVE,
                 'gym_id' => 5,
                 'category_id' => 12,
             ],
             [
                 'name' => 'Resistance Bands Set',
-                'usage' => 'Rehab, activation, mobility drills',
-                'model_no' => 'ESCH-RB-SET',
+                'usage_notes' => 'Rehab, activation, mobility drills',
+                'manufacturer_serial_no' => 'ESCH-RB-SET',
+                'asset_code' => 'GYM5-RB-01',
                 'value' => 18000.00,
-                'status' => 'DECOMMISSIONED',
+                'status' => Equipment::STATUS_DECOMMISSIONED,
                 'gym_id' => 5,
                 'category_id' => 4,
             ],
         ];
 
-        // Insert equipment data into the database
         foreach ($equipmentData as $equipment) {
-            Equipment::create($equipment);
+            Equipment::updateOrCreate(
+                // Unique identifier for equipment record (globally unique)
+                ['manufacturer_serial_no' => $equipment['manufacturer_serial_no']],
+
+                // Fields to insert/update
+                $equipment
+            );
         }
+
+        $this->command->info('Equipment seeded successfully.');
     }
 }

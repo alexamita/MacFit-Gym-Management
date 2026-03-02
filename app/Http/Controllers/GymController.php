@@ -14,14 +14,16 @@ class GymController extends Controller
         // Validation rules based on the migration and seeder logic
         $validated = $request->validate([
             'name'=>'required|string',
-            'longitude'=>'required|numeric|between:-180,180',
-            'latitude'=>'required|numeric|between:-90,90',
-            'description'=>'string|max:1000',
+            'location'=>'nullable|string',
+            'phone_number'=>'nullable|string',
+            'description'=>'nullable|string',
             ]);
 
         try {
             $gym = Gym::create($validated);
-            return response()->json($gym, 201);
+            return response()->json([
+                'message' => 'Gym Added Successfully',
+                $gym], 201);
         } catch (\Exception $exception) {
             return response()->json([
                 'error'   => 'Failed to save gym',
@@ -59,10 +61,10 @@ class GymController extends Controller
         $this->authorize('update', $gym);
 
         $validated = $request->validate([
-                'name'=>'required|string',
-                'longitude'=>'required|numeric|between:-180,180',
-                'latitude'=>'required|numeric|between:-90,90',
-                'description'=>'string|max:1000',
+            'name'=>'required|string',
+            'location'=>'nullable|string',
+            'phone_number'=>'nullable|string',
+            'description'=>'text',
             ]);
 
         try {

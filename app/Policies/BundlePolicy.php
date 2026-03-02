@@ -40,4 +40,9 @@ class BundlePolicy
         // Restricted to Managers and Admins.
         return $user->role->name === 'GYM_MANAGER';
     }
+
+    public function __construct()
+    {
+        //
+    }
 }

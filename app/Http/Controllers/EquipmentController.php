@@ -15,7 +15,7 @@ class EquipmentController extends Controller
         $validated = $request->validate([
             'name'=>'required|string',
             'usage'=>'required|string',
-            'model_no'=>'required|string|max:100',
+            'serial_no'=>'required|string|max:100',
             'value'=>'required|numeric|min:0',
             'status'=>'required|string|in:ACTIVE,UNDER_MAINTENANCE,FAULTY,DECOMMISSIONED',
             'gym_id'=>'required|int|exists:gyms,id',
@@ -77,7 +77,7 @@ class EquipmentController extends Controller
         $validated = $request->validate([
             'name'=>'required|string',
             'usage'=>'required|string',
-            'model_no'=>'required|string|max:100',
+            'serial_no'=>'required|string|max:100',
             'value'=>'required|numeric|min:0',
             'status'=>'required|string|in:ACTIVE,UNDER_MAINTENANCE,FAULTY,DECOMMISSIONED',
             'gym_id'=>'required|int|exists:gyms,id',

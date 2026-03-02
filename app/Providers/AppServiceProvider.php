@@ -23,14 +23,17 @@ class AppServiceProvider extends ServiceProvider
     {
         // This check runs BEFORE every other policy check
         Gate::before(function (User $user, string $ability) {
-            // We want to allow admins to do everything EXCEPT delete users, which is a very dangerous action that should be reserved for super admins or done manually in the database.
+          // 1. Safety Brake: Prevent accidental deletions
+        // This forces the app to look at the specific Policy for 'delete' logic.
             if ($ability === 'delete') {
-            return null;
-        }
-            // If the user is an admin, allow them to do everything else.
+            return null;}
+
+            // 2. The Golden Key: Admins get a pass for everything else
             if ($user->isAdmin) {
                 return true;
             }
+        // 3. Fallthrough: Returning null allows regular Policy checks to run for other roles
+        return null;
         });
     }
 }

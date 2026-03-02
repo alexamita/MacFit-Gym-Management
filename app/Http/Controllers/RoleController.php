@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\Role;
 class RoleController extends Controller
 {
@@ -12,9 +13,16 @@ class RoleController extends Controller
         $this->authorize('create', Role::class);
 
         $validated = $request->validate([
-            'name'=>'required|string|unique:roles,name',
-            'description'=>'nullable|string|max:1000',
+            'name'        =>'required|string|unique:roles,name',
+            'slug'        => 'nullable|string|max:255|unique:roles,slug',
+            'description' =>'nullable|string',
             ]);
+
+        // Generate slug if not provided
+        if (empty($validated['slug'])) {
+            $validated['slug'] = $this->generateUniqueSlug($validated['name']);
+        }
+
 
         try {
             $role = Role::create($validated);
@@ -58,8 +66,14 @@ class RoleController extends Controller
 
         $validated = $request->validate([
             'name'        => 'required|string|unique:roles,name,' . $role->id,
-            'description' => 'nullable|string|max:1000',
+            'slug'        => 'nullable|string|max:255|unique:roles,slug',
+            'description' => 'nullable|string',
         ]);
+
+       // If slug not provided, regenerate from name
+        if (empty($validated['slug'])) {
+            $validated['slug'] = $this->generateUniqueSlug($validated['name'], $role->id);
+        }
         try {
             $role->update($validated);
             return response()->json($role);
@@ -85,5 +99,27 @@ class RoleController extends Controller
                 'message'=> $exception->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Generate a unique slug for roles table.
+     */
+    private function generateUniqueSlug(string $name, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($name);
+        $slug = $base;
+        $i = 2;
+
+        while (
+            Role::query()
+                ->where('slug', $slug)
+                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $slug = $base . '-' . $i;
+            $i++;
+        }
+
+        return $slug;
     }
 }

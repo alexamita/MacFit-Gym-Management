@@ -1,5 +1,5 @@
 <?php
-// Migration for creating the cache and cache locks tables for caching data in the fitness subscription service application, including fields for cache key, value, expiration, and lock ownership
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

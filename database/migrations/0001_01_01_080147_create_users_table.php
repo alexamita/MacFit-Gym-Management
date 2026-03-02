@@ -1,5 +1,5 @@
 <?php
-// Migration for creating the users table, password reset tokens table, and sessions table for the fitness subscription service application, including fields for user authentication and session management
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,12 +13,26 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('role_id')
+                ->constrained('roles')
+                ->onDelete('restrict'); // Add foreign key constraint to roles table
+
+            $table->foreignId('gym_id')
+                    // ->nullable()
+                    ->constrained('gyms')
+                    ->restrictOnDelete();
+
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->boolean('is_active')->nullable(); //-> default(false)
+            $table->string('user_image')->nullable();
+
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

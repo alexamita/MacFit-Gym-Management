@@ -3,12 +3,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OtpMail;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserOtp;
 use App\Notifications\VerifyEmailNotification;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -21,12 +26,14 @@ class AuthController extends Controller
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:4|max:15|confirmed',
             'user_image' => 'nullable|max:2048|mimes:jpeg,png,jpg',
-            'role_id' => 'nullable|exists:roles,id'
+            'role_id' => 'nullable|exists:roles,id',
+            'gym_id' =>'required|exists:gyms,id',
         ]);
 
         // Check if a role_id is provided in the request, if not, assign the default role (e.g., 'USER') to the new user
         if($request->role_id) {
             $role_id = $request->role_id;
+
         } else {
             // Fetch the default role (e.g., 'USER') from the database to assign to the new user if no role_id is provided in the request
             $role = Role::where('name', 'USER')->first();
@@ -40,6 +47,7 @@ class AuthController extends Controller
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'role_id' => $role_id,
+            'gym_id' => $request->gym_id,
             // Hash the password before storing it in the database
             // 'password'=> Hash::make($validatedData['password']),
             // Alternative way to hash the password using bcrypt function
@@ -72,7 +80,8 @@ class AuthController extends Controller
                 'message' => 'User registered successfully',
                 'user' => $user
             ], 201);
-        } catch (\Exception $exception) {
+        }
+        catch (\Exception $exception) {
             return response()->json([
                 'error' => 'Failed to register user',
                 'message' => $exception->getMessage()
@@ -81,41 +90,65 @@ class AuthController extends Controller
     }
 
     // 2. USER LOGIN
-    public function login(Request $request)
-    {
+    public function login(Request $request){
         // Validate the incoming request data
         $validatedData = $request->validate([
             'email' => 'required|email|max:255',
             'password' => 'required|string|min:4|max:15',
         ]);
 
+        // Rate limiting (5 attempts per minute per email+IP)
+        $key = Str::lower($validatedData['email']) . '|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            return response()->json([
+                'message' => 'Too many login attempts. Please try again in a minute.'
+            ], 429);
+        }
+
+        RateLimiter::hit($key, 60);
+
+
         // Find the user by email in the database
         $user = User::where('email', $validatedData['email'])->first();
 
-        // If user exists and password is correct
-        if ($user && Hash::check($validatedData['password'], $user->password)) {
-
-            if (!$user->is_active) {
-                return response()->json([
-                    'message' => 'Your account is not active. Please verify your email address before logging in.'
-                ], 403);
-            }
-            //
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            // Return the token and user information in the response
+        if (!$user || !Hash::check($validatedData['password'], $user->password)) {
             return response()->json([
-                'message' => 'Login successful',
-                'token' => $token,
-                // Include user information and their abilities (permissions) in the response
-                'user' => $user,
-                'abilities' => $user->abilities(),
-            ], 200);
-        }
-        // If authentication fails, return an error response
-        return response()->json([
             'error' => 'Invalid credentials'
-        ], 401);
+            ], 401);
+        }
+
+        if (!$user->is_active) {
+            // Generate secure OTP
+            $otp = random_int(100000, 999999);
+            $expiresAt = now()->addMinutes(5);
+
+            // Store HASHED OTP
+            UserOtp::updateOrCreate([
+                    'user_id'=>$user->id,
+                    'otp'=> $otp,
+                    'expires_at'=> $expiresAt
+                ]
+            );
+
+            // Send OTP email
+            Mail::to($user->email)->send(new OtpMail($otp));
+
+            return response()->json([
+            'message'=> 'OTP sent to mail. Verify to continue.'
+            ], 200);
+
+        }
+
+            // $token = $user->createToken('auth_token')->plainTextToken; //make sure to add hasApiTokens in user.php
+            // Return the token and user information in the response
+            // return response()->json([
+            //     'message' => 'Login successful',
+            //     'token' => $token,
+            //     // Include user information and their abilities (permissions) in the response
+            //     'user' => $user,
+            //     'abilities' => $user->abilities(),
+            // ], 200);
     }
 
     // 3. USER LOGOUT
@@ -130,7 +163,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    // DELETE USER
+    //4. DELETE USER
     public function deleteUser(Request $request, User $user)
     {
         // Authorize the user to ensure they have permission to delete their account

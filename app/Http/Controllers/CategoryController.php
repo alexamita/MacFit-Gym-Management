@@ -14,7 +14,7 @@ class CategoryController extends Controller
 
         $validated = $request->validate([
             'name'=>'required|string|unique:categories,name',
-            'description'=>'nullable|string|max:1000',
+            'description'=>'nullable|text|max:1000',
             ]);
 
             try{
@@ -59,8 +59,8 @@ class CategoryController extends Controller
 
         $validated = $request->validate([
             // unique:table,column,except,idColumn
-            'name' => ['required','string',Rule::unique('categories')->ignore($category->id)],
-            'description' => 'nullable|string|max:1000',
+            'name'=>'required|string|unique:categories,name',
+            'description' => 'nullable|text',
         ]);
 
         try{

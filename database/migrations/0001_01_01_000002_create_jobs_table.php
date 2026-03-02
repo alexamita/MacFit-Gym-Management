@@ -1,5 +1,5 @@
 <?php
-// Migration for creating the jobs, job batches, and failed jobs tables for job processing in the gym management system, including fields for job details, batch information, and failure tracking
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

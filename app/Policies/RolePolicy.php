@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
+
 
 class RolePolicy
 {
@@ -40,5 +40,10 @@ class RolePolicy
     public function delete(User $user, Role $role): bool
     {
         return false;
+    }
+
+    public function __construct()
+    {
+        //
     }
 }

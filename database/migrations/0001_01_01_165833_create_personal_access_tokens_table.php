@@ -1,5 +1,5 @@
 <?php
-// Migration for creating the personal_access_tokens table for API token management in the fitness subscription service application, including fields for tokenable type and ID, token name, token value, abilities, last used timestamp, and expiration timestamp
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

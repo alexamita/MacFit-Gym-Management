@@ -39,4 +39,9 @@ class CategoryPolicy
         // Deleting a category can break multiple Bundles. Restricted strictly to the Admin (handled by bypass).
         return false;
     }
+
+    public function __construct()
+    {
+        //
+    }
 }

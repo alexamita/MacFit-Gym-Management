@@ -39,4 +39,9 @@ class EquipmentPolicy
         // Only the Admin (via bypass) or the Gym Manager can remove equipment records.
         return $user->role->name === 'GYM_MANAGER';
     }
+
+    public function __construct()
+    {
+        //
+    }
 }

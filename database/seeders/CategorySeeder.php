@@ -1,11 +1,10 @@
 <?php
-// CategorySeeder class for seeding the categories table with predefined fitness categories for organizing and filtering bundles in the gym management system, ensuring that each category has a unique name and description to provide meaningful classifications for users when browsing available bundles
+
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 use App\Models\Category;
-use App\Models\Gym;
 
 class CategorySeeder extends Seeder
 {
@@ -79,10 +78,16 @@ class CategorySeeder extends Seeder
 
         // Loop through categories and seed the database, ensuring no duplicates based on name
         foreach ($categories as $category) {
-            Category::firstOrCreate([
-                'name' => $category['name'],
-                'description' => $category['description'],
-            ]);
+            $slug = Str::slug($category['name']);
+            Category::updateOrCreate(
+                ['name' => $category['name']],
+            [
+                    'slug' => $slug,
+                    'description' => $category['description'],
+                    ],
+            );
         }
+
+        $this->command->info('Categories seeded successfully.');
     }
 }
