@@ -1,4 +1,4 @@
-## **MacFit – Gym Management System**
+## **MacFit – Simple Gym Management System**
 
 ---
 
@@ -133,7 +133,7 @@ API base path:
 
 ---
 
-## API Endpoints
+## API Endpoint Structure
 
 ### Bundles
 
@@ -147,107 +147,12 @@ API base path:
 
 ---
 
-## Project Structure
-
-```
-app/
-├── app/
-│   ├── 📂 Http/
-│   │   └── 📂 Controllers/
-│   │   │   ├── 📄 AuthController.php
-│   │   │   ├── 📄 BundleController.php
-│   │   │   ├── 📄 CategoryController.php
-│   │   │   ├── 📄 Controller.php
-│   │   │   ├── 📄 EquipmentController.php
-│   │   │   ├── 📄 GymController.php
-│   │   │   ├── 📄 RoleController.php
-│   │   │   └── 📄 SubscriptionController.php
-│   ├── 📂 Models/
-│   │   ├── 📄 Bundle.php
-│   │   ├── 📄 Category.php
-│   │   ├── 📄 Equipment.php
-│   │   ├── 📄 Gym.php
-│   │   ├── 📄 Role.php
-│   │   ├── 📄 Subscription.php
-│   │   └── 📄 User.php
-│   └── 📂 Providers/
-├── 📂 database/
-│   ├── 📂 factories/
-│   ├── 📂 migrations/
-│   │   ├── 📄 0001_01_01_000000_create_users_table.php
-│   │   ├── 📄 0001_01_01_000001_create_cache_table.php
-│   │   ├── 📄 0001_01_01_000002_create_jobs_table.php
-│   │   ├── 📄 2026_02_16_080147_create_gyms_table.php
-│   │   ├── 📄 2026_02_16_165833_create_personal_access_tokens_table.php
-│   │   ├── 📄 2026_02_17_063523_create_roles_table.php
-│   │   ├── 📄 2026_02_17_085637_create_categories_table.php
-│   │   ├── 📄 2026_02_18_092247_create_bundles_table.php
-│   │   ├── 📄 2026_02_18_140505_create_equipment_table.php
-│   │   └── 📄 2026_02_18_140530_create_subscriptions_table.php
-│   └── 📂 seeders/
-│   │   ├── 📄 BundleSeeder.php
-│   │   ├── 📄 CategorySeeder.php
-│   │   ├── 📄 DatabaseSeeder.php
-│   │   ├── 📄 EquipmentSeeder.php
-│   │   ├── 📄 GymSeeder.php
-│   │   ├── 📄 RoleSeeder.php
-│   │   └── 📄 SubscriptionSeeder.php
-├── **README.md**
-├── 📂 routes/
-│   ├── 📄 api.php
-│   ├── 📄 console.php
-│   └── 📄 web.php
-
-```
-
-### Highlights
-
-- **Migrations** define schema for:
-  - Gyms
-  - Roles
-  - Equipment
-  - Users
-  - Categories
-  - Bundles
-  - Subscriptions
-
-- **Seeders** populate realistic gym data and workout schedules.
-
----
-
-## Examples
-
-### Example: Create Bundle (POST `/api/saveBundle`)
-
-```json
-{
-        "name": "Basic Powerlifting",
-        "location": "Heavy Weight Zone",
-        "start_time": ,
-        "session_duration": 2, //hours
-        "description": "2-hour daily access to heavy racks.",
-        "category_id": 1,
-        "gym_id": 5,
-}
-```
-
----
-
 ## Dependencies
 
 - Laravel Framework
 - Carbon (Date & Time Handling)
 - MySQL Driver
 - Composer Packages (managed via `composer.json`)
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-**Seeder Not Running**
-- Confirm `DatabaseSeeder.php` references your seeders.
 
 ---
 
